@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
+					const resp = await fetch(process.env.BACKEND_URL + "/hello")
 					const data = await resp.json()
 					setStore({ message: data.message })
 					// don't forget to return something, that is how the async resolves
@@ -46,6 +46,59 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+
+			// SIGNUP / REGISTRO
+			signup: async(email, password) => {
+				try{
+					let response = await fetch(process.env.BACKEND_URL+'/signup/user',{
+						method: 'POST',
+						headers: {
+							'Content-Type':'application/json'
+						},
+						body: JSON.stringify({
+							'email': email,
+							'password': password
+						})
+					})
+					let data = await response.json()
+					if (response.ok){
+						return true;
+					}
+					return data;
+				}
+				catch (error) {
+					console.log(error);
+					return {'error':'unexpected error'};
+				}
+			},
+
+			// LOGIN / INICIO DE SESION
+			login: async(email, password) => {
+				try{
+					let response = await fetch(process.env.BACKEND_URL+'/login/user',{
+						method: 'POST',
+						headers: {
+							'Content-Type':'application/json'
+						},
+						body: JSON.stringify({
+							'email': email,
+							'password': password
+						})
+					})
+					console.log(response.status);
+					let data = await response.json()
+					if(response.ok){
+						localStorage.setItem('token', data.access_token);
+						return true;
+					}
+					return data;
+					
+				}
+				catch (error) {
+					console.log(error);
+					return {'error':'unexpected error'};
+				}
 			}
 		}
 	};

@@ -35,13 +35,14 @@ def signup():
          return({'error':'"email" must be a string'}), 400
     if user_by_email:
         if user_by_email.email == user['email']:
-            return jsonify('This email is already used'), 404
+            return jsonify({'error':'This email is already used'}), 403
     if not isinstance(user['password'], str) or len(user['password'].strip()) == 0:
          return({'error':'"password" must be a string'}), 400
 
     user_created = User(email=user['email'], password=user['password'], is_active=True)
     db.session.add(user_created)
     db.session.commit()
+    print("Usuario Registrado")
     return jsonify(user_created.serialize()), 200
 
 # LOGIN / INICIO DE SESION
@@ -59,11 +60,11 @@ def login():
 
     user_db = User.query.filter_by(email=user['email'], password=user['password']).first()
     if user_db is None:
-        return jsonify("incorrect credentials"), 401
+        return jsonify({"error":"incorrect credentials"}), 401
     
     access_token = create_access_token(identity=user['email'])
     print(access_token)
-    return jsonify(access_token), 200
+    return jsonify({"access_token":access_token}), 200
 
 # PROTECTED ROUTE PROFILE / RUTA PROTEGIDA PERFIL
 # Protect a route with jwt_required, which will kick out requests
