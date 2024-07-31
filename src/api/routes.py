@@ -26,7 +26,7 @@ def handle_hello():
 # ENDPOINTS
 # USUARIO
 # SIGNUP / REGISTRO
-@api.route('/signup/user', methods=['POST'])
+@api.route('/signup', methods=['POST'])
 def signup():
     user = request.get_json()
     user_by_email = User.query.filter_by(email=user['email']).first()
@@ -48,7 +48,7 @@ def signup():
 # LOGIN / INICIO DE SESION
 # Create a route to authenticate your users and return JWTs. The
 # create_access_token() function is used to actually generate the JWT.
-@api.route('/login/user', methods=['POST'])
+@api.route('/login', methods=['POST'])
 def login():
 
     user = request.get_json()

@@ -51,7 +51,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// SIGNUP / REGISTRO
 			signup: async(email, password) => {
 				try{
-					let response = await fetch(process.env.BACKEND_URL+'/signup/user',{
+					let response = await fetch(process.env.BACKEND_URL+'/signup',{
 						method: 'POST',
 						headers: {
 							'Content-Type':'application/json'
@@ -76,7 +76,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// LOGIN / INICIO DE SESION
 			login: async(email, password) => {
 				try{
-					let response = await fetch(process.env.BACKEND_URL+'/login/user',{
+					let response = await fetch(process.env.BACKEND_URL+'/login',{
 						method: 'POST',
 						headers: {
 							'Content-Type':'application/json'
@@ -87,9 +87,38 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 					})
 					console.log(response.status);
+					console.log(response);
 					let data = await response.json()
+					console.log(data);
 					if(response.ok){
 						localStorage.setItem('token', data.access_token);
+						return true;
+					}
+					return data;
+					
+				}
+				catch (error) {
+					console.log(error);
+					return {'error':'unexpected error'};
+				}
+			},
+
+			// GET PROFILE
+			getProfile: async() => {
+				let token = localStorage.getItem("token")
+				try{
+					let response = await fetch(process.env.BACKEND_URL+'/profile',{
+						method: 'GET',
+						headers: {
+							'Content-Type':'application/json',
+							'Authorization':`Bearer ${token}`
+						},
+						
+					})
+					let data = await response.json()
+					console.log(response.status);
+					console.log(data);
+					if(response.ok){
 						return true;
 					}
 					return data;
