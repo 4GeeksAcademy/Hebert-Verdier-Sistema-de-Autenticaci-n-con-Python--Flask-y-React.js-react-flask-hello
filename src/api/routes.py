@@ -42,7 +42,6 @@ def signup():
     user_created = User(email=user['email'], password=user['password'], is_active=True)
     db.session.add(user_created)
     db.session.commit()
-    print("Usuario Registrado")
     return jsonify(user_created.serialize()), 200
 
 # LOGIN / INICIO DE SESION
@@ -63,8 +62,7 @@ def login():
         return jsonify({"error":"incorrect credentials"}), 401
     
     access_token = create_access_token(identity=user['email'])
-    print(access_token)
-    return jsonify({"access_token":access_token}), 200
+    return jsonify({"access_token":access_token, "logged":True}), 200
 
 # PROTECTED ROUTE PROFILE / RUTA PROTEGIDA PERFIL
 # Protect a route with jwt_required, which will kick out requests
@@ -74,5 +72,17 @@ def login():
 def get_profile():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
-    print(current_user)
     return jsonify(logged_in_as=current_user), 200
+
+# PROTECTED ROUTE VALID TOKEN / RUTA PROTEGIDA VALIDACION DE TOKEN
+@api.route("/valid-token", methods=["GET"])
+@jwt_required()
+def valid_token():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    
+    user_exist = User.query.filter_by(email=current_user).first()
+    if user_exist is None:
+        return jsonify(logged=False), 404
+
+    return jsonify(logged=True), 200

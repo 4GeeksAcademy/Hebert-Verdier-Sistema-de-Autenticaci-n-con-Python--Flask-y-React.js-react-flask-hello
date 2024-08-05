@@ -13,7 +13,6 @@ export const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const login = await actions.login(email, password);
-        console.log(login);
         if (!login.error) {
             Swal.fire({
                 title: 'Success!',

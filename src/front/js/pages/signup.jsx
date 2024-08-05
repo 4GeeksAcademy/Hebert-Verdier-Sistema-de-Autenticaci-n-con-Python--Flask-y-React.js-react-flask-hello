@@ -13,7 +13,6 @@ export const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const registration = await actions.signup(email, password);
-        console.log(registration);
         if (!registration.error) {
             Swal.fire({
                 title: 'Success!',

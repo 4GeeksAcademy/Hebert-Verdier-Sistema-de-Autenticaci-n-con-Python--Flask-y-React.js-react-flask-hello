@@ -13,7 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			auth: false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -86,10 +87,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'password': password
 						})
 					})
-					console.log(response.status);
-					console.log(response);
 					let data = await response.json()
-					console.log(data);
 					if(response.ok){
 						localStorage.setItem('token', data.access_token);
 						return true;
@@ -116,13 +114,39 @@ const getState = ({ getStore, getActions, setStore }) => {
 						
 					})
 					let data = await response.json()
-					console.log(response.status);
 					console.log(data);
 					if(response.ok){
 						return true;
+						
 					}
 					return data;
 					
+				}
+				catch (error) {
+					console.log(error);
+					return {'error':'unexpected error'};
+				}
+			},
+			// VALID TOKEN
+			validToken: async() => {
+				let token = localStorage.getItem("token")
+				try{
+					let response = await fetch(process.env.BACKEND_URL+'/valid-token',{
+						method: 'GET',
+						headers: {
+							'Content-Type':'application/json',
+							'Authorization':`Bearer ${token}`
+						},
+						
+					})
+					let data = await response.json()
+					console.log(response);
+					console.log(data);
+					if(response.ok){
+						setStore({auth: data.logged})
+						return true;
+					}
+					return data;	
 				}
 				catch (error) {
 					console.log(error);
